@@ -1,17 +1,18 @@
 package com.shopping.merchant.catalogue.helper;
 
+import com.shopping.merchant.catalogue.entity.Merchant;
+import com.shopping.merchant.catalogue.validator.ValidatorException;
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVParser;
+import org.apache.commons.csv.CSVRecord;
+import org.springframework.web.multipart.MultipartFile;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
-
-import com.shopping.merchant.catalogue.entity.Merchant;
-import org.apache.commons.csv.CSVFormat;
-import org.apache.commons.csv.CSVParser;
-import org.apache.commons.csv.CSVRecord;
-import org.springframework.web.multipart.MultipartFile;
 
 public class CSVHelper {
     public static String TYPE = "text/csv";
@@ -35,6 +36,8 @@ public class CSVHelper {
                         Long.parseLong(csvRecord.get("Account_Number")),
                         Long.parseLong(csvRecord.get("Phone_Number"))
                 );
+                String message = ValidatorException.validity(merchant);
+                System.out.println("\n Error in data :"+ message+ "\n");
                 merchants.add(merchant);
             }
             return merchants;
