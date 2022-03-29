@@ -24,8 +24,8 @@ public class ValidatorException {
         message = message + "Invalid Name , ";
     if(!alphaNumericCheck(merchant.getGstin()) || sizeReportString(merchant.getGstin())!=15)
         message = message + "Invalid GSTIN , ";
-    if(!alphaNumericCheck(merchant.getGstin()) || sizeReportString(merchant.getGstin())!=10)
-        message = message + "Invalid Pan , " ;
+    if(!alphaNumericCheck(merchant.getPan()) || sizeReportString(merchant.getPan())!=10)
+        message = message + "Invalid PAN , " ;
     if(!(sizeReportString(merchant.getAccountNumber().toString())>9) ||
             !(sizeReportString(merchant.getAccountNumber().toString())<16))
         message = message + "Invalid account Number , ";

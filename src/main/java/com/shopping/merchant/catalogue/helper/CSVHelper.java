@@ -29,7 +29,7 @@ public class CSVHelper {
     }
 
     public static Pair<List<Merchant>, String> csvToMerchants(InputStream is) {
-        String message = "1.";
+        String message = "";
         try (BufferedReader fileReader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
              CSVParser csvParser = new CSVParser(fileReader,
                      CSVFormat.DEFAULT.withFirstRecordAsHeader().withIgnoreHeaderCase().withTrim());) {
@@ -44,9 +44,9 @@ public class CSVHelper {
                         csvRecord.get("PAN"),
                         Long.parseLong(csvRecord.get("Account_Number")),
                         Long.parseLong(csvRecord.get("Phone_Number"))
-                );count++;
-                message = message + ValidatorException.validity(merchant) + "\n    " + count.toString()+".";
-
+                );
+                message = message + count.toString()+"."+ValidatorException.validity(merchant);
+                count++;
                 merchants.add(merchant);
             }
             System.out.println("\n Error in data : \n"+ message+ " \n");
