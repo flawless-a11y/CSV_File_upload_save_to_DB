@@ -39,15 +39,21 @@ public class CSVController {
         if (CSVHelper.hasCSVFormat(file)) {
             try {
                 message = fileService.save(file);
+                String status = "";
+                if(message == "Data uploaded and saved successfully")
+                    status = " 200 Success";
+                else
+                    status = "400 Bad Request";
                 message +="   File :"+ file.getOriginalFilename();
-                return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(message));
+
+                return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(status,message));
             } catch (Exception e) {
                 message = "Could not upload the file: " + file.getOriginalFilename() + "!";
-                return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(new ResponseMessage(message));
+                return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(new ResponseMessage("417 expectation failed", message));
             }
         }
         message = "Please upload a csv file!";
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseMessage(message));
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseMessage("400 Bad Request", message));
     }
 
     @GetMapping("/merchants")
