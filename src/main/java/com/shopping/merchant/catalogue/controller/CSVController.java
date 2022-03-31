@@ -39,8 +39,7 @@ public class CSVController {
         if (CSVHelper.hasCSVFormat(file)) {
             try {
                 message = fileService.save(file);
-                if(message.length()==2)
-                message = "Uploaded the file successfully: " + file.getOriginalFilename();
+                message +="   File :"+ file.getOriginalFilename();
                 return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(message));
             } catch (Exception e) {
                 message = "Could not upload the file: " + file.getOriginalFilename() + "!";

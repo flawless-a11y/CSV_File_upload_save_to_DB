@@ -42,7 +42,7 @@ public class Merchant {
     }
 
     public Merchant(String merchantName, String gstin, String pan,
-                    Long accountNumber, Long phoneNumber) {
+                    String address, Long accountNumber, Long phoneNumber) {
         this.merchantId = merchantId;
         this.merchantName = merchantName;
         this.gstin = gstin;

@@ -19,8 +19,13 @@ public class CSVService {
     public String save(MultipartFile file) {
         try {
             Pair<List<Merchant> , String> data = CSVHelper.csvToMerchants(file.getInputStream());
+            if(data.getValue().length()==0){
             repository.saveAll(data.getKey());
-            return data.getValue();
+            return "Data uploaded and saved successfully";
+            }
+            else {
+                return "There is some discrepancy in the file data . Check the reported data location "+data.getValue();
+            }
         } catch (IOException e) {
             throw new RuntimeException("fail to store csv data: " + e.getMessage());
         }

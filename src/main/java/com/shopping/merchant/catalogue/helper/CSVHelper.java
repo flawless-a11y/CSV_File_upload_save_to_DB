@@ -38,19 +38,21 @@ public class CSVHelper {
             Integer count = 1;
             for (CSVRecord csvRecord : csvRecords) {
                 Merchant merchant = new Merchant(
-                        //Long.parseLong(csvRecord.get("Id")),
                         csvRecord.get("Merchant_Name"),
                         csvRecord.get("GSTIN"),
                         csvRecord.get("PAN"),
+                        csvRecord.get("Address"),
                         Long.parseLong(csvRecord.get("Account_Number")),
                         Long.parseLong(csvRecord.get("Phone_Number"))
                 );
-                message = message + count.toString()+"."+ValidatorException.validity(merchant);
-                count++;
-                merchants.add(merchant);
+                message = ValidatorException.validity(merchant);
+                if(message == "") {
+                    count++;
+                    merchants.add(merchant);
+                }else {
+                    return new Pair<List<Merchant>,String>(merchants,count.toString()+". "+message);
+                }
             }
-            System.out.println("\n Error in data : \n"+ message+ " \n");
-
             return  new Pair<List<Merchant>,String>(merchants,message);
         } catch (IOException e) {
             throw new RuntimeException("fail to parse CSV file: " + e.getMessage());
