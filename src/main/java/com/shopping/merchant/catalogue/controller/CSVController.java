@@ -20,8 +20,11 @@ import java.util.Optional;
 @RestController
 @RequestMapping
 public class CSVController {
+
     @Autowired
     CSVService fileService;
+
+
     @PostMapping("/merchant/upload")
     @Operation(summary = "This is to upload merchant data through csv file ")
     @ApiResponse(responseCode = "200" ,
@@ -68,6 +71,35 @@ public class CSVController {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    /*@GetMapping("/merchants")
+    @Operation(summary = "This is to fetch all data at once in json format")
+    @ApiResponse(responseCode = "204",
+            description = "Database is empty")
+    @ApiResponse(responseCode = "200",
+            description = "Data retrieved successfully" )
+    @ApiResponse(responseCode = "500",
+            description = "An error occurred")
+
+    public ResponseEntity<Map<String,Object>> getAllMerchants(
+            @RequestParam(required = false ) String name ,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "3") int size
+    ) {
+        try {
+            List<Merchant> merchants = fileService.getAllMerchants();
+            Pageable paging = PageRequest.of(page,size);
+            Page<Merchant> pageMerch;
+            if(name==null)
+                pageMerch =
+            if (merchants.isEmpty()) {
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            }
+            return new ResponseEntity<>(merchants, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }*/
 
     @GetMapping("/merchant/{id}")
     @Operation(summary = "This is to fetch data of one merchant related to a merchant_id")
