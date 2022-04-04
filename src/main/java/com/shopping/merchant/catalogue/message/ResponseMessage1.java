@@ -1,18 +1,25 @@
 package com.shopping.merchant.catalogue.message;
 
-public class ResponseMessage {
+import com.shopping.merchant.catalogue.entity.Merchant;
+
+import java.util.List;
+
+public class ResponseMessage1 {
 
     private String status;
 
     private String message;
 
+    private List<Merchant> data ;
 
-    public ResponseMessage() {
+    public ResponseMessage1() {
     }
 
-    public ResponseMessage(String status, String message) {
+
+    public ResponseMessage1(String status, String message, List<Merchant> data) {
         this.status = status;
         this.message = message;
+        this.data = data;
     }
 
     public String getStatus() {
@@ -31,11 +38,20 @@ public class ResponseMessage {
         this.message = message;
     }
 
+    public List<Merchant> getData() {
+        return data;
+    }
+
+    public void setData(List<Merchant> data) {
+        this.data = data;
+    }
+
     @Override
     public String toString() {
         return "ResponseMessage{" +
                 "status='" + status + '\'' +
                 ", message='" + message + '\'' +
+                ", data=" + data +
                 '}';
     }
 }

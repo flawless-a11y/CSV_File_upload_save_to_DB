@@ -9,4 +9,7 @@ public interface PaginationAndSortingRepository extends JpaRepository<Merchant,S
     Page<Merchant> findByGstin(String gstin, Pageable pageable);
     Page<Merchant> findAllByMerchantNameContaining(String name , Pageable pageable);
     Page<Merchant> findByPanContaining(String pan , Pageable pageable);
-}
+    Page<Merchant> findByMerchantId(Long merchantId , Pageable pageable);
+
+
+ }

@@ -3,6 +3,7 @@ package com.shopping.merchant.catalogue.controller;
 import com.shopping.merchant.catalogue.entity.Merchant;
 import com.shopping.merchant.catalogue.helper.CSVHelper;
 import com.shopping.merchant.catalogue.message.ResponseMessage;
+import com.shopping.merchant.catalogue.message.ResponseMessage1;
 import com.shopping.merchant.catalogue.service.CSVService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -13,8 +14,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @CrossOrigin("*")
 @RestController
@@ -24,105 +25,85 @@ public class CSVController {
     @Autowired
     CSVService fileService;
 
-
-    @PostMapping("/merchant/upload")
     @Operation(summary = "This is to upload merchant data through csv file ")
-    @ApiResponse(responseCode = "200" ,
+    @ApiResponse(responseCode = "200",
             description = "File uploaded successfully and data is saved to db",
             content = {@Content(mediaType = "application/csv")})
     @ApiResponse(responseCode = "400",
-            description ="Please Upload a CSV file")
+            description = "Please Upload a CSV file")
     @ApiResponse(responseCode = "417",
-            description ="Could not upload the file")
+            description = "Could not upload the file")
+    @PostMapping("/merchant/upload")
     public ResponseEntity<ResponseMessage> uploadFile(@RequestParam("file") MultipartFile file) {
         String message = "";
         if (CSVHelper.hasCSVFormat(file)) {
             try {
                 message = fileService.save(file);
                 String status = "";
-                if(message == "Data uploaded and saved successfully")
-                    status = " 200 Success";
+                if (message == "Data uploaded and saved successfully")
+                    status = " Success";
                 else
-                    status = "400 Bad Request";
-                message +="   File :"+ file.getOriginalFilename();
+                    status = "Failure";
+                message += " File :" + file.getOriginalFilename();
 
-                return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(status,message));
+                return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(status, message));
             } catch (Exception e) {
-                message = "Could not upload the file: " + file.getOriginalFilename() + "!";
-                return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(new ResponseMessage("417 expectation failed", message));
+                message = "Could not upload the file:" + file.getOriginalFilename() + "!";
+                return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(new ResponseMessage("Failure", message));
             }
         }
         message = "Please upload a csv file!";
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseMessage("400 Bad Request", message));
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseMessage("Failure", message));
     }
 
-    @GetMapping("/merchants")
-    @Operation(summary = "This is to fetch all data at once in json format")
-    @ApiResponse(responseCode = "204",
-                 description = "Database is empty")
-    @ApiResponse(responseCode = "200",
-                 description = "Data retrieved successfully" )
-    @ApiResponse(responseCode = "500",
-                 description = "An error occurred")
 
-    public ResponseEntity<List<Merchant>> getAllMerchants() {
-        try {
-            List<Merchant> merchants = fileService.getAllMerchants();
-            if (merchants.isEmpty()) {
-                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-            }
-            return new ResponseEntity<>(merchants, HttpStatus.OK);
-        } catch (Exception e) {
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    /*@GetMapping("/merchants")
     @Operation(summary = "This is to fetch all data at once in json format")
     @ApiResponse(responseCode = "204",
             description = "Database is empty")
     @ApiResponse(responseCode = "200",
-            description = "Data retrieved successfully" )
+            description = "Data retrieved successfully")
     @ApiResponse(responseCode = "500",
-            description = "An error occurred")
-
-    public ResponseEntity<Map<String,Object>> getAllMerchants(
-            @RequestParam(required = false ) String name ,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "3") int size
-    ) {
+            description = "Unknown error occurred")
+    @GetMapping("/merchant/all")
+    public ResponseEntity<?> getAllMerchants() {
         try {
             List<Merchant> merchants = fileService.getAllMerchants();
-            Pageable paging = PageRequest.of(page,size);
-            Page<Merchant> pageMerch;
-            if(name==null)
-                pageMerch =
             if (merchants.isEmpty()) {
-                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+                return ResponseEntity.status(HttpStatus.NO_CONTENT).body(new ResponseMessage("Failure", "Database empty no data exits"));
             }
-            return new ResponseEntity<>(merchants, HttpStatus.OK);
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage1("Success", "Successfully retrieved data", merchants));
         } catch (Exception e) {
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseMessage("Failure", "Something has gone wrong on the website's server"));
         }
-    }*/
+    }
 
-    @GetMapping("/merchant/{id}")
-    @Operation(summary = "This is to fetch data of one merchant related to a merchant_id")
+
+    @Operation(summary = "This is to fetch data of one or more merchant with specified merchants ids")
     @ApiResponse(responseCode = "204",
             description = "Database is empty")
     @ApiResponse(responseCode = "200",
-            description = "Data retrieved successfully" )
+            description = "Data retrieved successfully")
     @ApiResponse(responseCode = "500",
-            description = "An error occurred")
-    public ResponseEntity<Optional<Merchant>> getMerchantById(@PathVariable("id") Long Id){
-        try {
-            Optional<Merchant> merchants = fileService.getMerchantById(Id);
-            if (merchants.isPresent()) {
-                return new ResponseEntity<>(merchants, HttpStatus.OK);
+            description = "Unknown error occurred")
+    @GetMapping("/merchant/{ids}")
+    public ResponseEntity<?> getMerchantByIds(@PathVariable("ids") List<Integer> ids) {
+
+        List<Merchant> merchants = new ArrayList<>();
+        for (Integer id : ids) {
+            try {
+                Merchant merchant =  fileService.getMerchantById(id);
+                merchants.add(merchant);
+            } catch (Exception e) {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseMessage("Failure",
+                        "Something has gone wrong on the website's server"));
             }
-                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        } catch (Exception e) {
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
+        if (merchants.isEmpty()) {
+            return (ResponseEntity<?>) ResponseEntity.status(HttpStatus.NO_CONTENT);
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage1("Success",
+                "Data of the requested merchants is retrieved",merchants));
     }
 }
+
+
