@@ -1,10 +1,10 @@
 package com.shopping.merchant.catalogue.controller;
 
 import com.shopping.merchant.catalogue.entity.Merchant;
-import com.shopping.merchant.catalogue.helper.CSVHelper;
 import com.shopping.merchant.catalogue.message.ResponseMessage;
 import com.shopping.merchant.catalogue.message.ResponseMessage1;
 import com.shopping.merchant.catalogue.service.CSVService;
+import com.shopping.merchant.catalogue.utility.FileToMultipart;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,18 +26,24 @@ public class CSVController {
     @Autowired
     CSVService fileService;
 
+    @Autowired
+    FileToMultipart fileToMultipart;
+
     @Operation(summary = "This is to upload merchant data through csv file ")
     @ApiResponse(responseCode = "200",
             description = "File uploaded successfully and data is saved to db",
-            content = {@Content(mediaType = "application/csv")})
+            content = {@Content(mediaType = "String")})
     @ApiResponse(responseCode = "400",
             description = "Please Upload a CSV file")
     @ApiResponse(responseCode = "417",
             description = "Could not upload the file")
     @PostMapping("/merchant/upload")
-    public ResponseEntity<ResponseMessage> uploadFile(@RequestParam("file") MultipartFile file) {
+    public ResponseEntity<ResponseMessage> uploadFile(@RequestParam("filepath") String filepath) throws IOException {
+        MultipartFile file = fileToMultipart.ConvertFileToMultipart(filepath);
         String message = "";
-        if (CSVHelper.hasCSVFormat(file)) {
+        int lastDot = filepath.lastIndexOf('.');
+        String extension = filepath.substring(lastDot+1);
+        if (extension.equals("csv")) {
             try {
                 message = fileService.save(file);
                 String status = "";

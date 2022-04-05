@@ -6,7 +6,6 @@ import javafx.util.Pair;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -21,12 +20,12 @@ public class CSVHelper {
 
     public static String TYPE = "text/csv";
 
-    static String[] HEADERs = { "Merchant_Id", "Merchant_Name", "GSTIN", "PAN","Address","Account_Number","Phone_Number",
-            "Created","Modified"};
+    static String[] HEADERs = {"Merchant_Id", "Merchant_Name", "GSTIN", "PAN", "Address", "Account_Number", "Phone_Number",
+            "Created", "Modified"};
 
-    public static boolean hasCSVFormat(MultipartFile file) {
+    /*public static boolean hasCSVFormat(MultipartFile file) {
         return TYPE.equals(file.getContentType());
-    }
+}*/
 
     public static Pair<List<Merchant>, String> csvToMerchants(InputStream is) {
         String message = "";
