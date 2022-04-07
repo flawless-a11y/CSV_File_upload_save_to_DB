@@ -1,4 +1,4 @@
-package com.shopping.merchant.catalogue.security;
+package com.shopping.merchant.catalogue.config.security;
 
 import com.shopping.merchant.catalogue.jwt.AuthEntryPointJwt;
 import com.shopping.merchant.catalogue.jwt.AuthTokenFilter;

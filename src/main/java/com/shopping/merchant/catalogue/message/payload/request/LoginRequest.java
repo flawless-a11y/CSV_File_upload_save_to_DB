@@ -1,4 +1,4 @@
-package com.shopping.merchant.catalogue.payload.request;
+package com.shopping.merchant.catalogue.message.payload.request;
 
 
 import javax.validation.constraints.NotBlank;

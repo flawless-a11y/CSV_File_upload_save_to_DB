@@ -14,8 +14,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @CrossOrigin("*")
@@ -39,27 +41,34 @@ public class CSVController {
             description = "Could not upload the file")
     @PostMapping("/merchant/upload")
     public ResponseEntity<ResponseMessage> uploadFile(@RequestParam("filepath") String filepath) throws IOException {
-        MultipartFile file = fileToMultipart.ConvertFileToMultipart(filepath);
+        File check = new File(filepath);
         String message = "";
-        int lastDot = filepath.lastIndexOf('.');
-        String extension = filepath.substring(lastDot+1);
-        if (extension.equals("csv")) {
-            try {
-                message = fileService.save(file);
-                String status = "";
-                if (message == "Data uploaded and saved successfully")
-                    status = " Success";
-                else
-                    status = "Failure";
-                message += " File :" + file.getOriginalFilename();
+        if (check.exists()) {
+            MultipartFile file = fileToMultipart.ConvertFileToMultipart(filepath);
 
-                return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(status, message));
-            } catch (Exception e) {
-                message = "Could not upload the file:" + file.getOriginalFilename() + "!";
-                return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(new ResponseMessage("Failure", message));
+            int lastDot = filepath.lastIndexOf('.');
+            String extension = filepath.substring(lastDot + 1);
+            if (extension.equals("csv")) {
+                try {
+                    message = fileService.save(file);
+                    String status = "";
+                    if (message == "Data uploaded and saved successfully")
+                        status = " Success";
+                    else
+                        status = "Failure";
+                    message += " File :" + file.getOriginalFilename();
+
+                    return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(status, message));
+                } catch (Exception e) {
+                    message = "Could not upload the file:" + file.getOriginalFilename() + "!";
+                    return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(new ResponseMessage("Failure", message));
+                }
             }
+
+            message = "Please upload a csv file!";
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseMessage("Failure", message));
         }
-        message = "Please upload a csv file!";
+        message = "File Doesn't exist";
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseMessage("Failure", message));
     }
 
@@ -94,22 +103,22 @@ public class CSVController {
             description = "Unknown error occurred")
     @GetMapping("/merchant/{ids}")
     public ResponseEntity<?> getMerchantByIds(@PathVariable("ids") List<Integer> ids) {
-
+        Collections.sort(ids);
         List<Merchant> merchants = new ArrayList<>();
         for (Integer id : ids) {
             try {
-                Merchant merchant =  fileService.getMerchantById(id);
+                Merchant merchant = fileService.getMerchantById(id);
                 merchants.add(merchant);
             } catch (Exception e) {
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseMessage("Failure",
                         "Something has gone wrong on the website's server"));
             }
         }
-        if (merchants.isEmpty()) {
-            return (ResponseEntity<?>) ResponseEntity.status(HttpStatus.NO_CONTENT);
+        if (merchants.get(0) == null) {
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(new ResponseMessage("Failure", "Requested Merchant Id does not exist"));
         }
         return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage1("Success",
-                "Data of the requested merchants is retrieved",merchants));
+                "Data of the requested merchants is retrieved", merchants));
     }
 }
 

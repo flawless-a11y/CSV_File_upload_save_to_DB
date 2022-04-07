@@ -1,7 +1,7 @@
 package com.shopping.merchant.catalogue.helper;
 
 import com.shopping.merchant.catalogue.entity.Merchant;
-import com.shopping.merchant.catalogue.validator.ValidatorException;
+import com.shopping.merchant.catalogue.validator.MerchantTableValidator;
 import javafx.util.Pair;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
@@ -44,7 +44,7 @@ public class CSVHelper {
                         Long.parseLong(csvRecord.get("Account_Number")),
                         Long.parseLong(csvRecord.get("Phone_Number"))
                 );
-                message = ValidatorException.validity(merchant);
+                message = MerchantTableValidator.validity(merchant);
                 if(message == "") {
                     count++;
                     merchants.add(merchant);

@@ -1,4 +1,4 @@
-package com.shopping.merchant.catalogue.config;
+package com.shopping.merchant.catalogue.config.logger;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

@@ -1,4 +1,4 @@
-package com.shopping.merchant.catalogue.pagination;
+package com.shopping.merchant.catalogue.repository;
 
 import com.shopping.merchant.catalogue.entity.Merchant;
 import org.springframework.data.domain.Page;

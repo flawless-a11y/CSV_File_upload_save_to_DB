@@ -3,7 +3,7 @@ package com.shopping.merchant.catalogue.validator;
 
 import com.shopping.merchant.catalogue.entity.Merchant;
 
-public class ValidatorException {
+public class MerchantTableValidator {
     public static boolean stringOnlyWithAlphabetAndSpaces(String data){
         return data.matches("^[ A-Za-z]+$");
     }

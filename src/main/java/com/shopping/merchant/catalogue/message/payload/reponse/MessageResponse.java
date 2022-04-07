@@ -1,4 +1,4 @@
-package com.shopping.merchant.catalogue.payload.reponse;
+package com.shopping.merchant.catalogue.message.payload.reponse;
 
 public class MessageResponse {
     private String message;

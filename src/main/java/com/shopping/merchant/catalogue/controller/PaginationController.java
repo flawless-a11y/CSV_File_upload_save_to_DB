@@ -1,7 +1,7 @@
 package com.shopping.merchant.catalogue.controller;
 
 import com.shopping.merchant.catalogue.entity.Merchant;
-import com.shopping.merchant.catalogue.pagination.PaginationAndSortingRepository;
+import com.shopping.merchant.catalogue.repository.PaginationAndSortingRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -14,10 +14,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @RestController
 public class PaginationController {
@@ -36,12 +33,12 @@ public class PaginationController {
             Pageable pageable =  PageRequest.of(page,size, Sort.by(getDirection(sort)));
             merchantPage = paginationAndSortingRepository.findAll(pageable);
             merchants = merchantPage.getContent();
-            Map<String, Object> response = new HashMap<>();
+            LinkedHashMap<String, Object> response = new LinkedHashMap<>();
             response.put("status","Success");
             response.put("currentPage",merchantPage.getNumber());
             response.put("totalItems",merchantPage.getTotalElements());
             response.put("totalPages",merchantPage.getTotalPages());
-            response.put("merchants",merchants);
+            response.put("data",merchants);
             return new ResponseEntity<>(response, HttpStatus.OK);
 
         } catch (Exception e) {
