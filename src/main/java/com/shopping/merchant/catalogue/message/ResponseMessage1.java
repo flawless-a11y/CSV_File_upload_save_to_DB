@@ -10,7 +10,7 @@ public class ResponseMessage1 {
 
     private String message;
 
-    private List<Merchant> data ;
+    private List<Merchant> data;
 
     public ResponseMessage1() {
     }

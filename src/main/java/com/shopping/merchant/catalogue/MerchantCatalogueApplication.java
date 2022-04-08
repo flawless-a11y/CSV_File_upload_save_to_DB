@@ -8,8 +8,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @OpenAPIDefinition
 public class MerchantCatalogueApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(MerchantCatalogueApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(MerchantCatalogueApplication.class, args);
+    }
 
 }

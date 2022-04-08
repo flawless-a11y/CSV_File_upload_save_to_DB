@@ -14,7 +14,7 @@ import java.util.Date;
 
 public class Merchant {
 
-    @Column(insertable = false, updatable = false, columnDefinition="serial")
+    @Column(insertable = false, updatable = false, columnDefinition = "serial")
     private Long merchantId;
 
     private String merchantName;

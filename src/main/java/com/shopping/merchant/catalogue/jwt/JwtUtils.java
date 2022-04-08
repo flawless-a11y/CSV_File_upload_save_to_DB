@@ -24,9 +24,10 @@ public class JwtUtils {
     private int jwtExpirationMs;
     @Value("${logFilePath}")
     private String logFilePath;
+
     public String generateJwtToken(Authentication authentication) {
-        Map<String ,Object> customClaim = new HashMap<String,Object>();
-        customClaim.put("Microservice","Merchant Catalogue");
+        Map<String, Object> customClaim = new HashMap<String, Object>();
+        customClaim.put("Microservice", "Merchant Catalogue");
         UserDetailsImpl userPrincipal = (UserDetailsImpl) authentication.getPrincipal();
         return Jwts.builder().setClaims(customClaim)
                 .setSubject((userPrincipal.getUsername()))
@@ -35,9 +36,11 @@ public class JwtUtils {
                 .signWith(SignatureAlgorithm.HS512, jwtSecret)
                 .compact();
     }
+
     public String getUserNameFromJwtToken(String token) {
         return Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token).getBody().getSubject();
     }
+
     public boolean validateJwtToken(String authToken) throws FileNotFoundException {
         try {
             Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(authToken);

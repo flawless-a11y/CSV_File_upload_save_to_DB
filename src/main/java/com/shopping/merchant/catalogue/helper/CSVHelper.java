@@ -11,6 +11,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,9 +30,9 @@ public class CSVHelper {
 
     public static Pair<List<Merchant>, String> csvToMerchants(InputStream is) {
         String message = "";
-        try (BufferedReader fileReader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
+        try (BufferedReader fileReader = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
              CSVParser csvParser = new CSVParser(fileReader,
-                     CSVFormat.DEFAULT.withFirstRecordAsHeader().withIgnoreHeaderCase().withTrim());) {
+                     CSVFormat.DEFAULT.withFirstRecordAsHeader().withIgnoreHeaderCase().withTrim())) {
             List<Merchant> merchants = new ArrayList<Merchant>();
             Iterable<CSVRecord> csvRecords = csvParser.getRecords();
             Integer count = 1;
@@ -45,14 +46,14 @@ public class CSVHelper {
                         Long.parseLong(csvRecord.get("Phone_Number"))
                 );
                 message = MerchantTableValidator.validity(merchant);
-                if(message == "") {
+                if (message == "") {
                     count++;
                     merchants.add(merchant);
-                }else {
-                    return new Pair<List<Merchant>,String>(merchants,count.toString()+". "+message);
+                } else {
+                    return new Pair<List<Merchant>, String>(merchants, count + ". " + message);
                 }
             }
-            return  new Pair<List<Merchant>,String>(merchants,message);
+            return new Pair<List<Merchant>, String>(merchants, message);
         } catch (IOException e) {
             throw new RuntimeException("fail to parse CSV file: " + e.getMessage());
         }

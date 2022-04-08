@@ -72,28 +72,6 @@ public class CSVController {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseMessage("Failure", message));
     }
 
-
-    @Operation(summary = "This is to fetch all data at once in json format")
-    @ApiResponse(responseCode = "204",
-            description = "Database is empty")
-    @ApiResponse(responseCode = "200",
-            description = "Data retrieved successfully")
-    @ApiResponse(responseCode = "500",
-            description = "Unknown error occurred")
-    @GetMapping("/merchant/all")
-    public ResponseEntity<?> getAllMerchants() {
-        try {
-            List<Merchant> merchants = fileService.getAllMerchants();
-            if (merchants.isEmpty()) {
-                return ResponseEntity.status(HttpStatus.NO_CONTENT).body(new ResponseMessage("Failure", "Database empty no data exits"));
-            }
-            return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage1("Success", "Successfully retrieved data", merchants));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseMessage("Failure", "Something has gone wrong on the website's server"));
-        }
-    }
-
-
     @Operation(summary = "This is to fetch data of one or more merchant with specified merchants ids")
     @ApiResponse(responseCode = "204",
             description = "Database is empty")
