@@ -8,7 +8,13 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.PrintStream;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+
 @Component
 public class JwtUtils {
     private static final Logger logger = LoggerFactory.getLogger(JwtUtils.class);
@@ -16,9 +22,13 @@ public class JwtUtils {
     private String jwtSecret;
     @Value("${jwtExpirationMs}")
     private int jwtExpirationMs;
+    @Value("${logFilePath}")
+    private String logFilePath;
     public String generateJwtToken(Authentication authentication) {
+        Map<String ,Object> customClaim = new HashMap<String,Object>();
+        customClaim.put("Microservice","Merchant Catalogue");
         UserDetailsImpl userPrincipal = (UserDetailsImpl) authentication.getPrincipal();
-        return Jwts.builder()
+        return Jwts.builder().setClaims(customClaim)
                 .setSubject((userPrincipal.getUsername()))
                 .setIssuedAt(new Date())
                 .setExpiration(new Date((new Date()).getTime() + jwtExpirationMs))
@@ -28,9 +38,13 @@ public class JwtUtils {
     public String getUserNameFromJwtToken(String token) {
         return Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token).getBody().getSubject();
     }
-    public boolean validateJwtToken(String authToken) {
+    public boolean validateJwtToken(String authToken) throws FileNotFoundException {
         try {
             Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(authToken);
+            final Claims body = Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(authToken).getBody();
+
+            PrintStream writeToLog = new PrintStream(new FileOutputStream(logFilePath, true));
+            writeToLog.append((CharSequence) body.get("Microservice"));
             return true;
         } catch (SignatureException e) {
             logger.error("Invalid JWT signature: {}", e.getMessage());

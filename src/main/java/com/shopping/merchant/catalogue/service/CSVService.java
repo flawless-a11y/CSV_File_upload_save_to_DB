@@ -23,7 +23,7 @@ public class CSVService {
             return "Data uploaded and saved successfully";
             }
             else {
-                return "There is some discrepancy in the file data . Check the reported data location "+data.getValue();
+                return "There is some discrepancy in the file data . Check the reported data location row number "+data.getValue();
             }
         } catch (IOException e) {
             throw new RuntimeException("fail to store csv data: " + e.getMessage());
