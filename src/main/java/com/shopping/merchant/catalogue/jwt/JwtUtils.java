@@ -39,7 +39,7 @@ public class JwtUtils {
     public String generateJwtToken(Authentication authentication) {
         Map<String, Object> customClaim = new HashMap<String, Object>();
         UserDetailsImpl userPrincipal = (UserDetailsImpl) authentication.getPrincipal();
-        customClaim.put("Microservice",userRepository.findByUsernameContaining(userPrincipal.getUsername()).getName());
+        customClaim.put("Microservice",userRepository.getByUsername(userPrincipal.getUsername()).getName());
         return Jwts.builder().setClaims(customClaim)
                 .setSubject((userPrincipal.getUsername()))
                 .setIssuedAt(new Date())

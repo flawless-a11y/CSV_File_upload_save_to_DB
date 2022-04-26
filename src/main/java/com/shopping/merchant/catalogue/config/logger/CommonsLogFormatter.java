@@ -71,8 +71,10 @@ public final class CommonsLogFormatter extends JwtUtils implements Sink {
                 ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes())
                         .getRequest();
 
-        output.append(getClaims(request1.getHeader("Authorization").substring(7)));
-        output.append(' ');
+        if(!(request1.getRequestURI().contains("signin") || request1.getRequestURI().contains("signup"))){
+            output.append(getClaims(request1.getHeader("Authorization").substring(7)));
+            output.append(' ');
+        }
         output.append(request.getRemote());
         output.append(' ');
         output.append('-');
