@@ -11,8 +11,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.PrintStream;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -22,12 +20,21 @@ public class JwtUtils {
     private static final Logger logger = LoggerFactory.getLogger(JwtUtils.class);
     @Autowired
     private UserRepository userRepository;
+    private static String jwtSecret;
+
     @Value("${jwtSecret}")
-    private String jwtSecret;
+    public void setJwtSecret(String jwtSecret) {
+        JwtUtils.jwtSecret = jwtSecret;
+    }
     @Value("${jwtExpirationMs}")
     private Long jwtExpirationMs;
-    @Value("${logFilePath}")
-    private String logFilePath;
+
+
+    public String getClaims(String authToken){
+        final Claims body = Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(authToken).getBody();
+        return (String) body.get("Microservice");
+
+    }
 
     public String generateJwtToken(Authentication authentication) {
         Map<String, Object> customClaim = new HashMap<String, Object>();
@@ -48,10 +55,6 @@ public class JwtUtils {
     public boolean validateJwtToken(String authToken) throws FileNotFoundException {
         try {
             Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(authToken);
-            final Claims body = Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(authToken).getBody();
-
-            PrintStream writeToLog = new PrintStream(new FileOutputStream(logFilePath, true));
-            writeToLog.append((CharSequence) body.get("Microservice"));
             return true;
         } catch (SignatureException e) {
             logger.error("Invalid JWT signature: {}", e.getMessage());

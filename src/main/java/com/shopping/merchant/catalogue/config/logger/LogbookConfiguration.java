@@ -3,7 +3,6 @@ package com.shopping.merchant.catalogue.config.logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.zalando.logbook.CommonsLogFormatSink;
 import org.zalando.logbook.Logbook;
 import org.zalando.logbook.StreamHttpLogWriter;
 
@@ -29,7 +28,7 @@ public class LogbookConfiguration {
                         requestTo("/v3/api-docs/**"),
                         contentType("application/octet-stream"),
                         header("X-Secret", o -> false)))
-                .sink(new CommonsLogFormatSink(
+                .sink(new CommonsLogFormatter(
                         new StreamHttpLogWriter(output)))
                 .build();
 
