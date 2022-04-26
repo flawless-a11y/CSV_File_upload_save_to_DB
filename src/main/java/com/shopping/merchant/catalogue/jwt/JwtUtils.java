@@ -1,9 +1,11 @@
 package com.shopping.merchant.catalogue.jwt;
 
+import com.shopping.merchant.catalogue.repository.UserRepository;
 import com.shopping.merchant.catalogue.service.UserDetailsImpl;
 import io.jsonwebtoken.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
@@ -18,17 +20,19 @@ import java.util.Map;
 @Component
 public class JwtUtils {
     private static final Logger logger = LoggerFactory.getLogger(JwtUtils.class);
+    @Autowired
+    private UserRepository userRepository;
     @Value("${jwtSecret}")
     private String jwtSecret;
     @Value("${jwtExpirationMs}")
-    private int jwtExpirationMs;
+    private Long jwtExpirationMs;
     @Value("${logFilePath}")
     private String logFilePath;
 
     public String generateJwtToken(Authentication authentication) {
         Map<String, Object> customClaim = new HashMap<String, Object>();
-        customClaim.put("Microservice", "Merchant Catalogue");
         UserDetailsImpl userPrincipal = (UserDetailsImpl) authentication.getPrincipal();
+        customClaim.put("Microservice",userRepository.findByUsernameContaining(userPrincipal.getUsername()).getName());
         return Jwts.builder().setClaims(customClaim)
                 .setSubject((userPrincipal.getUsername()))
                 .setIssuedAt(new Date())
